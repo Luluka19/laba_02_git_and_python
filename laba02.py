@@ -4,10 +4,17 @@ import requests
 import shutil
 import os
 import platform
+import zipfile
 
 NVD_DB_PATH="NVD_DB"
 
-if(platform.system() == 'Linux'):
+if (platform.system() == 'Windows'):
+    path_to_reports_file = f"{NVD_DB_PATH}"
+    isExist = os.path.exists(f"{NVD_DB_PATH}")
+    if not isExist:
+    # Create a new directory because it does not exist
+        os.makedirs(f"{NVD_DB_PATH}")
+elif(platform.system() == 'Linux'):
     path_to_reports_file = f"{NVD_DB_PATH}"
     isExist = os.path.exists(f"{NVD_DB_PATH}")
     if not isExist:
@@ -29,13 +36,13 @@ def nvd_db_update():
         with open(f"nvdcve-1.1-{year_var}.json.zip", "wb") as code:
             code.write(r.content)
         ####### moving downloaded archives
-        shutil.move(f"nvdcve-1.1-{year_var}.json.zip", f"{ps.PATH_TO_NVD_FILES_FOLDER}/nvdcve-1.1-{year_var}.json.zip")
+        shutil.move(f"nvdcve-1.1-{year_var}.json.zip", f"{NVD_DB_PATH}/nvdcve-1.1-{year_var}.json.zip")
         #time.sleep(20)
     #    ###### Extracting archives
-        print(f"{ps.PATH_TO_NVD_FILES_FOLDER}/nvdcve-1.1-{year_var}.json.zip")
-        with zipfile.ZipFile(f"{ps.PATH_TO_NVD_FILES_FOLDER}/nvdcve-1.1-{year_var}.json.zip", 'r') as zip_ref:
-            zip_ref.extractall(f"{ps.PATH_TO_NVD_FILES_FOLDER}/")
-        os.remove(f"{ps.PATH_TO_NVD_FILES_FOLDER}/nvdcve-1.1-{year_var}.json.zip")
+        print(f"{NVD_DB_PATH}/nvdcve-1.1-{year_var}.json.zip")
+        with zipfile.ZipFile(f"{NVD_DB_PATH}/nvdcve-1.1-{year_var}.json.zip", 'r') as zip_ref:
+            zip_ref.extractall(f"{NVD_DB_PATH}/")
+        os.remove(f"{NVD_DB_PATH}/nvdcve-1.1-{year_var}.json.zip")
     #
     for iterat in special_urls:
         matching_pattern = re.match(r"(.*)/(.*)", iterat)
@@ -43,12 +50,13 @@ def nvd_db_update():
         with open(f"{matching_pattern.group(2)}", "wb") as code:
             code.write(r.content)
     #     # moving downloaded archives
-        shutil.move(f"{matching_pattern.group(2)}", f"{ps.PATH_TO_NVD_FILES_FOLDER}/{matching_pattern.group(2)}")
-        with zipfile.ZipFile(f"{ps.PATH_TO_NVD_FILES_FOLDER}/{matching_pattern.group(2)}", 'r') as zip_ref:
-            zip_ref.extractall(f"{ps.PATH_TO_NVD_FILES_FOLDER}/")
-        os.remove(f"{ps.PATH_TO_NVD_FILES_FOLDER}/{matching_pattern.group(2)}")
+        shutil.move(f"{matching_pattern.group(2)}", f"{NVD_DB_PATH}/{matching_pattern.group(2)}")
+        with zipfile.ZipFile(f"{NVD_DB_PATH}/{matching_pattern.group(2)}", 'r') as zip_ref:
+            zip_ref.extractall(f"{NVD_DB_PATH}/")
+        os.remove(f"{NVD_DB_PATH}/{matching_pattern.group(2)}")
         #
     print("--- %s seconds ---" % (time.time() - start_time))
     print(f" nvd_db_update() finished ")
     
-#nvd_db_update()
+nvd_db_update()
+#print(time.localtime())
