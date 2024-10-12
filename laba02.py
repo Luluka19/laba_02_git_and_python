@@ -1,6 +1,6 @@
 import time
 import datetime
-import requests
+import requests as re
 import shutil
 import os
 import platform
