@@ -5,6 +5,7 @@ import shutil
 import os
 import platform
 import zipfile
+import requests
 
 NVD_DB_PATH="NVD_DB"
 
